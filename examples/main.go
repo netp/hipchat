@@ -1,17 +1,16 @@
 package main
 
 import (
-	"log"
-
 	"github.com/andybons/hipchat"
+	"log"
 )
 
 func main() {
-	c := hipchat.Client{AuthToken: "<PUT YOUR AUTH TOKEN HERE>"}
+	c := hipchat.Client{AuthToken: "<PUT YOUR API TOKEN HERE>", ApiVersion: 2}
+
 	req := hipchat.MessageRequest{
-		RoomId:        "Rat Man’s Den",
-		From:          "GLaDOS",
-		Message:       "Bad news: Combustible lemons failed.",
+		RoomId:        "Goal",
+		Message:       "Good news: Here's my fork github.com/netp/hipchat, which suports api (v2)",
 		Color:         hipchat.ColorPurple,
 		MessageFormat: hipchat.FormatText,
 		Notify:        true,

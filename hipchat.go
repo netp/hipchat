@@ -8,10 +8,11 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+  "bytes"
 )
 
 const (
-	baseURL = "https://api.hipchat.com/v1"
+	baseURL = "https://api.hipchat.com/v"
 
 	ColorYellow = "yellow"
 	ColorRed    = "red"
@@ -30,7 +31,7 @@ type MessageRequest struct {
 	// Required. ID or name of the room.
 	RoomId string
 
-	// Required. Name the message will appear to be sent from. Must be less
+	// Name the message will appear to be sent from. Must be less
 	// than 15 characters long. May contain letters, numbers, -, _, and spaces.
 	From string
 
@@ -71,6 +72,7 @@ type ErrorResponse struct {
 
 type Client struct {
 	AuthToken string
+	ApiVersion int
 }
 
 func urlValuesFromMessageRequest(req MessageRequest) (url.Values, error) {
@@ -95,32 +97,42 @@ func urlValuesFromMessageRequest(req MessageRequest) (url.Values, error) {
 }
 
 func (c *Client) PostMessage(req MessageRequest) error {
-	uri := fmt.Sprintf("%s/rooms/message?auth_token=%s", baseURL, url.QueryEscape(c.AuthToken))
+  if c.ApiVersion == 1 {
+	  uri := fmt.Sprintf("%s1/rooms/message?auth_token=%s", baseURL, url.QueryEscape(c.AuthToken))
 
-	payload, err := urlValuesFromMessageRequest(req)
-	if err != nil {
-		return err
-	}
+    payload, err := urlValuesFromMessageRequest(req)
+    if err != nil {
+      return err
+    }
 
-	resp, err := http.PostForm(uri, payload)
-	if err != nil {
-		return err
-	}
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return err
-	}
+    resp, err := http.PostForm(uri, payload)
+    if err != nil {
+      return err
+    }
+    defer resp.Body.Close()
+  } else  if c.ApiVersion == 2 {
+    uri := fmt.Sprintf("%s2/room/%s/notification?auth_token=%s", baseURL, req.RoomId, url.QueryEscape(c.AuthToken))
 
-	msgResp := &struct{ Status string }{}
-	if err := json.Unmarshal(body, msgResp); err != nil {
-		return err
-	}
-	if msgResp.Status != ResponseStatusSent {
-		return errors.New("PostMessage: response 'status' field was not 'sent'.")
-	}
+    var postdata = []byte(fmt.Sprintf("{\"message\": \"%s\"}", req.Message) )
 
-	return nil
+    //var postdata = []byte(`{"message":"Hell, I need to sleep"}`)
+
+    req, err := http.NewRequest("POST", uri, bytes.NewBuffer(postdata) )
+    req.Header.Add("Content-Type", "application/json")
+
+    cl := &http.Client{}
+    resp, err := cl.Do(req)
+
+    if err != nil {
+      fmt.Printf("%v", err)
+    }
+
+    fmt.Printf("%v", resp)
+    return nil
+
+  }
+
+  return nil
 }
 
 func (c *Client) RoomHistory(id, date, tz string) ([]Message, error) {
