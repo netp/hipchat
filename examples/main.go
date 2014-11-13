@@ -6,11 +6,14 @@ import (
 )
 
 func main() {
-	c := hipchat.Client{AuthToken: "API3HNZpYZKTsKEN6odo7knb1dA7L3OuPrnfw4KA", ApiVersion: 2}
+	c := hipchat.Client{AuthToken: "<your api key>", ApiVersion: 2}
 
 	req := hipchat.MessageRequest{
-		RoomId:        "Goal",
-		Message:       "This message has been sent from client github.com/netp/hipchat",
+		RoomId:        "Test",
+		Message:       "This message\n has been sent from \nclient\n" +
+      "github.com/netp/hipchat\n" + 
+      "with a lot of newlines in the form \n but hipchat will \n" +
+      "ignore them anyway.\n",
 		Color:         hipchat.ColorPurple,
 		MessageFormat: hipchat.FormatText,
 		Notify:        true,

@@ -1,12 +1,10 @@
 Hipchat
 =====
-(*API version 2 is supported but WIP yet*).
 
-This project implements a [Go](http://golang.org) client library for the [Hipchat API](https://www.hipchat.com/docs/api/) 
+This is a version of andybons/hipchat with support for Hipchat API v2.
 
-Pull requests are welcome as the API is limited to only a few calls right now.
-
-Star this or get at me on the Twitters if you end up using this since this is pretty early stage and <b>I may make breaking changes to the API.</b> – [@andybons](https://www.twitter.com/andybons)
+This project implements a [Go](http://golang.org) client library for 
+the [Hipchat API](https://www.hipchat.com/docs/api/) 
 
 Installing
 ----------

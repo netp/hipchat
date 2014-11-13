@@ -111,11 +111,11 @@ func (c *Client) PostMessage(req MessageRequest) error {
     }
     defer resp.Body.Close()
   } else  if c.ApiVersion == 2 {
-    uri := fmt.Sprintf("%s2/room/%s/notification?auth_token=%s", baseURL, req.RoomId, url.QueryEscape(c.AuthToken))
+    uri := fmt.Sprintf("%s2/room/%s/notification?auth_token=%s",
+      baseURL, url.QueryEscape(req.RoomId), url.QueryEscape(c.AuthToken))
 
-    var postdata = []byte(fmt.Sprintf("{\"message\": \"%s\"}", req.Message) )
-
-    //var postdata = []byte(`{"message":"Hell, I need to sleep"}`)
+    msg, _ := json.Marshal(req.Message)
+    postdata := []byte(fmt.Sprintf("{\"message\": %s }", string(msg) ))
 
     req, err := http.NewRequest("POST", uri, bytes.NewBuffer(postdata) )
     req.Header.Add("Content-Type", "application/json")
