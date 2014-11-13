@@ -1,6 +1,8 @@
 Hipchat
 =====
-This project implements a [Go](http://golang.org) client library for the [Hipchat API](https://www.hipchat.com/docs/api/) (*API version 2 is not supported*).
+(*API version 2 is supported but WIP yet*).
+
+This project implements a [Go](http://golang.org) client library for the [Hipchat API](https://www.hipchat.com/docs/api/) 
 
 Pull requests are welcome as the API is limited to only a few calls right now.
 
@@ -18,23 +20,23 @@ Example usage:
 package main
 
 import (
-	"github.com/andybons/hipchat"
+	"github.com/netp/hipchat"
 	"log"
 )
 
 func main() {
-	c := hipchat.Client{AuthToken: "<PUT YOUR AUTH TOKEN HERE>"}
+	c := hipchat.Client{AuthToken: "<YOUR API TOKEN>", ApiVersion: 2}
+
 	req := hipchat.MessageRequest{
-		RoomId:        "Rat Man's Den",
-		From:          "GLaDOS",
-		Message:       "Bad news: Combustible lemons failed.",
+		RoomId:        "Goal",
+		Message:       "This message has been sent from client github.com/netp/hipchat",
 		Color:         hipchat.ColorPurple,
 		MessageFormat: hipchat.FormatText,
 		Notify:        true,
 	}
-
 	if err := c.PostMessage(req); err != nil {
 		log.Printf("Expected no error, but got %q", err)
 	}
+}
 }
 ```
